@@ -7,9 +7,9 @@
 
 Name:             %{?scl_prefix}%{project}-gogo-shell
 Version:          0.10.0
-Release:          9.0%{?dist}
+Release:          13%{?dist}
 Summary:          Community OSGi R4 Service Platform Implementation - Basic Commands
-
+Group:            Development/Tools
 License:          ASL 2.0
 URL:              http://felix.apache.org/site/apache-felix-gogo.html
 
@@ -25,18 +25,17 @@ BuildArch:        noarch
 BuildRequires:    java-devel >= 1.7.0
 BuildRequires:    jpackage-utils
 BuildRequires:    maven-local
-BuildRequires:    xmvn
 BuildRequires:    maven-plugin-bundle
-BuildRequires:    maven-surefire-provider-junit4
+BuildRequires:    maven-surefire-provider-junit
 BuildRequires:    %{?scl_prefix}felix-gogo-parent
 BuildRequires:    %{?scl_prefix}felix-gogo-runtime
 BuildRequires:    felix-osgi-compendium
 BuildRequires:    maven-install-plugin
 BuildRequires:    mockito
 
-%{?scl:BuildRequires:	  %{?scl_prefix}build}
+%{?scl:BuildRequires:  %{?scl_prefix}build}
 
-Requires:         java 
+Requires:         java-headless 
 Requires:         jpackage-utils
 %{?scl:Requires: %scl_runtime}
 
@@ -50,9 +49,8 @@ OSGi technology combines aspects of these aforementioned principles to define a
 dynamic service deployment framework that is amenable to remote management.
 
 %package javadoc
-
+Group:            Documentation
 Summary:          Javadoc for %{pkg_name}
-Requires:         jpackage-utils
 
 %description javadoc
 This package contains the API documentation for %{pkg_name}.
@@ -63,35 +61,31 @@ This package contains the API documentation for %{pkg_name}.
 %patch1
 
 %build
-%{?scl:%scl_maven_opts}
-mvn-rpmbuild install javadoc:aggregate 
+%mvn_build
 
 %install
-# jars
-install -d -m 0755 %{buildroot}%{_javadir}/%{project}
-install -pm 644 target/%{bundle}-%{version}.jar %{buildroot}%{_javadir}/%{project}/%{bundle}.jar
+%mvn_install
 
-# pom
-install -d -m 755 %{buildroot}%{_mavenpomdir}
-install -pm 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP.%{project}-%{bundle}.pom
-%add_maven_depmap JPP.%{project}-%{bundle}.pom %{project}/%{bundle}.jar
-
-# javadoc
-install -d -m 0755 %{buildroot}%{_javadocdir}/%{pkg_name}
-cp -pr target/site/api*/* %{buildroot}%{_javadocdir}/%{pkg_name}
-
-
-%files
+%files -f .mfiles
+%dir %{_javadir}/%{name}
 %doc DEPENDENCIES LICENSE NOTICE
-%{_javadir}/*
-%{_mavenpomdir}/JPP.%{project}-%{bundle}.pom
-%{_mavendepmapfragdir}/%{name}
 
-%files javadoc
+%files javadoc -f .mfiles-javadoc
 %doc LICENSE
-%{_javadocdir}/%{pkg_name}
 
 %changelog
+* Wed Jul 16 2014 Mat Booth <mat.booth@redhat.com> - 0.10.0-13
+- Fix unowned directory.
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.0-12
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Fri May 16 2014 Alexander Kurtakov <akurtako@redhat.com> 0.10.0-11
+- Start using mvn_build/install.
+
+* Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0.10.0-10
+- Use Requires: java-headless rebuild (#1067528)
+
 * Mon Aug 5 2013 Krzysztof Daniel <kdaniel@redhat.com> 0.10.0-9
 - Fix FTBFS.
 
@@ -119,3 +113,4 @@ cp -pr target/site/api*/* %{buildroot}%{_javadocdir}/%{pkg_name}
 
 * Mon Jan 09 2012 Tomas Radej <tradej@redhat.com> - 0.10.0-1
 - Initial packaging
+
