@@ -11,7 +11,7 @@ Release:          13%{?dist}
 Summary:          Community OSGi R4 Service Platform Implementation - Basic Commands
 Group:            Development/Tools
 License:          ASL 2.0
-URL:              http://felix.apache.org/site/apache-felix-gogo.html
+URL:              https://felix.apache.org/site/apache-felix-gogo.html
 
 Source0:          http://mirror.catn.com/pub/apache//felix/org.apache.felix.gogo.shell-0.10.0-project.tar.gz
   
